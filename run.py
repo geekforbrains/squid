@@ -37,7 +37,7 @@ def get_posts():
     posts = []
 
     for item in get_post_items():
-        if item[0] == '.':
+        if item[0] == '.' or item[0] == '_':
             continue
 
         post = format_post(item)
@@ -60,6 +60,21 @@ def date_format(timestamp):
         return t.strftime(format).replace('{S}', str(t.day) + suffix(t.day))
 
     return custom_format('%B {S}, %Y', timestamp)
+
+
+# ---------------------------------------------------------------------------
+# ERROR PAGES
+# ---------------------------------------------------------------------------
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('errors/404.html'), 404
+
+
+@app.errorhandler(500)
+def page_not_found(e):
+    return render_template('errors/500.html'), 404
 
 
 # ---------------------------------------------------------------------------

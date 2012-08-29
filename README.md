@@ -56,6 +56,11 @@ go to (assuming you're running on localhost):
 
     http://localhost:5000/post/10-reasons-why-eating-rainbow-cookies-wont-make-you-a-magical-unicorn
 
+To create a draft post, that wont show up automatically on the index page and cant be accessed via a route, prepend the filename with
+an underscore.
+
+    _example_of_a_draft.md
+
 
 Creating a Page
 ---------------
