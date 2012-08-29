@@ -1,5 +1,4 @@
-import os
-import fnmatch
+import os, fnmatch
 from datetime import datetime
 
 from markdown import markdown
@@ -7,6 +6,11 @@ from markdown import markdown
 from flask import Flask, Markup, render_template, abort
 
 app = Flask(__name__)
+
+
+# ---------------------------------------------------------------------------
+# HELPERS
+# ---------------------------------------------------------------------------
 
 
 def format_post(item):
@@ -43,6 +47,8 @@ def get_posts():
 
 
 # ---------------------------------------------------------------------------
+# FILTERS
+# ---------------------------------------------------------------------------
 
 
 @app.template_filter('date_format')
@@ -56,6 +62,8 @@ def date_format(timestamp):
     return custom_format('%B {S}, %Y', timestamp)
 
 
+# ---------------------------------------------------------------------------
+# ROUTES (VIEWS)
 # ---------------------------------------------------------------------------
 
 
