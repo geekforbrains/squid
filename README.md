@@ -4,8 +4,8 @@ Squid
 Squid is a static blog site generator built on Flask. One creates Markdown pages and posts and Squid maps those
 files to routes. 
 
-Squid was created as a pet project to play with and learn Flask. It is not meant to be a full featured static site 
-generator. If you're looking for something like that, check out [Octopress](http://octopress.org).
+Squid was created as a pet project to play with and learn [Flask](http://flask.pocoo.org). It is not meant to be 
+a full featured static site generator. If you're looking for something like that, check out [Octopress](http://octopress.org).
 
 
 Installation
@@ -16,7 +16,7 @@ easily via `pip` or `easy_install`
 
     $ sudo pip install virtualenv
 
-Once you have virtualenv installed, make sure you're in the projects root directory and create a new environment.
+Once you have virtualenv installed, clone a copy of this repo. Make sure you're in the projects root directory and create a new environment.
 
     $ virtualenv env
 
@@ -96,6 +96,6 @@ Squid is built on and inspired by the software and tools below:
 - [Markdown](http://daringfireball.net/projects/markdown)
 - [Octopress](http://octopress.org)
 
-Gavin Vickery
-gavin@geekforbrains.com
+Gavin Vickery  
+gavin@geekforbrains.com  
 http://geekforbrains.com
