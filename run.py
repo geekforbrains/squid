@@ -68,12 +68,12 @@ def date_format(timestamp):
 
 
 @app.errorhandler(404)
-def page_not_found(e):
+def _404(e):
     return render_template('errors/404.html'), 404
 
 
 @app.errorhandler(500)
-def page_not_found(e):
+def _500(e):
     return render_template('errors/500.html'), 404
 
 
