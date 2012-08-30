@@ -1,11 +1,17 @@
-import os, fnmatch
+import os
+import fnmatch
 from datetime import datetime
 
 from markdown import markdown
 
 from flask import Flask, Markup, render_template, abort
+from werkzeug.contrib.cache import MemcachedCache
+
 
 app = Flask(__name__)
+app.config.from_object('config')
+
+cache = MemcachedCache(app.config['MEMCACHED_SERVER'])
 
 
 # ---------------------------------------------------------------------------
@@ -84,41 +90,70 @@ def _500(e):
 
 @app.route('/')
 def index():
-    return render_template('index.html', posts=get_posts())
+    try:
+        template = cache.get('index')
+
+        if template is None:
+            template = render_template('index.html', posts=get_posts())
+            cache.set('index', template, timeout=app.config['SQUID_CACHE_INDEX'])
+
+        return template
+    except:
+        abort(500)
 
 
 @app.route('/page/<slug>')
 def page(slug):
     try:
-        clean_slug = slug.replace('-', '_')
-        content = app.open_resource('templates/pages/%s.md' % clean_slug, 'r').read()
-        content = Markup(markdown(content))
+        cache_key = 'page:%s' % slug
+        template = cache.get(cache_key)
 
-        title = slug.replace('-', ' ').title()
-        return render_template('page.html', content=content, page_title=title)
-    except Exception, e:
+        if template is None:
+            clean_slug = slug.replace('-', '_')
+            content = app.open_resource('templates/pages/%s.md' % clean_slug, 'r').read()
+            content = Markup(markdown(content))
+
+            title = slug.replace('-', ' ').title()
+            template = render_template('page.html', content=content, page_title=title)
+
+            cache.set(cache_key, template, timeout=app.config['SQUID_CACHE_PAGE'])
+
+        return template
+    except:
         abort(404)
 
 
 @app.route('/post/<slug>')
 def post(slug):
     try:
-        clean_slug = slug.replace('-', '_')
-        post = None
-        
-        for item in get_post_items():
-            if fnmatch.fnmatch(item, '*_%s.md' % clean_slug):
-                post = item
-                break
+        cache_key = 'post:%s' % slug
+        template = cache.get(cache_key)
 
-        content = app.open_resource('templates/posts/%s' % post, 'r').read()
-        content = Markup(markdown(content))
+        if template is None:
+            clean_slug = slug.replace('-', '_')
+            post = None
+            
+            for item in get_post_items():
+                if fnmatch.fnmatch(item, '*_%s.md' % clean_slug):
+                    post = item
+                    break
 
-        title = format_post(post)['title']
-        return render_template('post.html', content=content, page_title=title)
-    except Exception, e:
+            content = app.open_resource('templates/posts/%s' % post, 'r').read()
+            content = Markup(markdown(content))
+
+            title = format_post(post)['title']
+            template = render_template('post.html', content=content, page_title=title)
+
+            cache.set(cache_key, template, timeout=app.config['SQUID_CACHE_POST'])
+
+        return template
+    except:
         abort(404)
 
 
-if __name__ == '__main__':
+if app.config['USE_PROXY']:
+    from werkzeug.contrib.fixers import ProxyFix
+    app.wsgi_app = ProxyFix(app.wsgi_app)
+
+elif __name__ == '__main__':
     app.run()

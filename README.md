@@ -87,8 +87,8 @@ Planned Features
 
 Below are a list of features I plan on adding in the future:
 
-- Caching
 - Portfolio/Photo Gallery
+- RSS for posts
 
 
 Credits
